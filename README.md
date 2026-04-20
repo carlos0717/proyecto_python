@@ -1,4 +1,4 @@
-# Django SaaS Boilerplate
+# Django Peluquería
 
 Kit de inicio para construir aplicaciones SaaS con Django. Incluye autenticación, pagos, panel de control y despliegue.
 
@@ -150,42 +150,41 @@ Visit **http://localhost:8000** — admin login: `admin@example.com` / `admin123
 ## Project structure
 
 ```
-django-saas-boilerplate/
+django-peluqueria/
 ├── core/
-│   ├── settings.py           # All config via env vars
-│   ├── urls.py               # Root URL routing
-│   ├── wsgi.py
-│   └── asgi.py
+│   ├── settings.py           # Configuración general del proyecto
+│   ├── urls.py               # Enrutamiento principal de URLs
+│   ├── wsgi.py               # Configuración para servidores WSGI
+│   └── asgi.py               # Configuración para servidores ASGI
 ├── apps/
-│   ├── accounts/             # CustomUser (email-only), admin
-│   │   ├── models.py         # CustomUser + CustomUserManager
-│   │   ├── admin.py
-│   │   └── tests.py          # 6 tests
-│   ├── dashboard/            # Dashboard, profile, settings
-│   │   ├── models.py         # SubscriptionPlan, UserSettings
-│   │   ├── views.py          # dashboard, profile, settings, plans
-│   │   ├── tasks.py          # Background email tasks
-│   │   ├── tests.py          # 6 tests
-│   │   └── management/commands/seed_data.py
-│   ├── subscriptions/        # Stripe integration
-│   │   ├── models.py         # StripeCustomer
-│   │   └── views.py          # checkout, webhooks
-│   └── landing/              # Public pages
-│       ├── views.py          # home, features, pricing, robots.txt
-│       └── tests.py          # 4 tests
+│   ├── accounts/             # Gestión de usuarios personalizados (solo email)
+│   │   ├── models.py         # Modelo CustomUser y su gestor
+│   │   ├── admin.py          # Configuración del panel de administración
+│   │   └── tests.py          # Pruebas unitarias para la app de usuarios
+│   ├── dashboard/            # Panel de control para usuarios autenticados
+│   │   ├── models.py         # Modelos para planes de suscripción y ajustes
+│   │   ├── views.py          # Vistas para el panel, perfil y ajustes
+│   │   ├── tasks.py          # Tareas en segundo plano (ejemplo: correos)
+│   │   ├── tests.py          # Pruebas unitarias para el dashboard
+│   │   └── management/commands/seed_data.py # Comando para poblar datos de prueba
+│   ├── subscriptions/        # Integración con Stripe para pagos
+│   │   ├── models.py         # Modelo para clientes de Stripe
+│   │   └── views.py          # Vistas para pagos y webhooks
+│   └── landing/              # Páginas públicas (home, precios, características)
+│       ├── views.py          # Vistas para las páginas públicas
+│       └── tests.py          # Pruebas unitarias para la app pública
 ├── templates/
-│   ├── base.html             # Public layout (nav + footer)
-│   ├── account/              # 20 allauth templates (styled)
-│   ├── dashboard/            # Dashboard layout + pages
-│   ├── landing/              # Home, features, pricing
-│   └── subscriptions/        # Stripe checkout
-├── static/css/               # Design system CSS
-├── CLAUDE.md                 # AI editor context
-├── Makefile                  # Dev commands
-├── Procfile                  # Deployment
-├── pyproject.toml            # Ruff config
-├── requirements.txt
-└── .env.example
+│   ├── base.html             # Plantilla base pública (navegación y pie de página)
+│   ├── account/              # Plantillas para autenticación (django-allauth)
+│   ├── dashboard/            # Plantillas para el panel de usuario
+│   ├── landing/              # Plantillas para las páginas públicas
+│   └── subscriptions/        # Plantillas para el flujo de pagos con Stripe
+├── static/css/               # Archivos CSS del sistema de diseño
+├── Makefile                  # Comandos de desarrollo
+├── Procfile                  # Configuración para despliegue
+├── pyproject.toml            # Configuración de Ruff (linter)
+├── requirements.txt          # Dependencias del proyecto
+└── .env.example              # Archivo de ejemplo para variables de entorno
 ```
 
 ## Environment variables
