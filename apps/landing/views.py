@@ -1,10 +1,17 @@
+"""Vistas publicas del sitio: home comercial, pricing, features y robots.txt."""
+
+# HttpResponse se usa para devolver texto plano en robots.txt.
 from django.http import HttpResponse
+# render arma respuestas HTML usando plantillas.
 from django.shortcuts import render
+# require_http_methods restringe cada endpoint a metodos permitidos.
 from django.views.decorators.http import require_http_methods
 
 
 @require_http_methods(['GET'])
 def robots_txt(request):
+    """Entrega robots.txt para SEO e indexacion de buscadores."""
+
     lines = [
         "User-agent: *",
         "Allow: /",
@@ -16,36 +23,38 @@ def robots_txt(request):
 
 @require_http_methods(['GET'])
 def home(request):
+    """Muestra la landing principal con la propuesta de valor del producto."""
+
     features = [
         {
-            'icon': 'shield-halved',
-            'title': 'Authentication',
-            'description': 'Email-based signup, login, verification, and password reset. Powered by django-allauth.',
+            'icon': 'cash-register',
+            'title': 'Control Diario',
+            'description': 'Registra ingresos y egresos por servicios y productos en segundos.',
         },
         {
-            'icon': 'credit-card',
-            'title': 'Stripe Payments',
-            'description': 'Subscriptions, webhooks, and payment intents. Ready to accept payments on day one.',
+            'icon': 'users',
+            'title': 'Gestion de Empleados',
+            'description': 'Administra personal, roles y estado activo desde un solo panel.',
         },
         {
-            'icon': 'gauge-high',
-            'title': 'Dashboard',
-            'description': 'User profile, settings, notification preferences, and API key management built in.',
+            'icon': 'chart-line',
+            'title': 'Reportes',
+            'description': 'Visualiza resultados diarios y mensuales para decidir con datos reales.',
         },
         {
-            'icon': 'bolt',
-            'title': 'Background Tasks',
-            'description': 'Django 6.0 native async tasks. No Celery, no Redis, no extra infrastructure.',
+            'icon': 'filter',
+            'title': 'Filtros por Fecha',
+            'description': 'Consulta periodos personalizados para comparar rendimiento del negocio.',
         },
         {
-            'icon': 'lock',
-            'title': 'Security',
-            'description': 'CSP headers, HSTS, secure cookies, and SSL redirect. Production-grade from the start.',
+            'icon': 'user-shield',
+            'title': 'Roles y Permisos',
+            'description': 'Administrador, gerente y empleado con accesos diferenciados.',
         },
         {
-            'icon': 'rocket',
-            'title': 'Deploy Ready',
-            'description': 'PostgreSQL, WhiteNoise, Gunicorn, and Procfile. Push to production in minutes.',
+            'icon': 'mobile-screen-button',
+            'title': 'Interfaz Simple',
+            'description': 'Diseñado para equipos pequenos con flujo claro y rapido.',
         },
     ]
 
@@ -56,9 +65,11 @@ def home(request):
 
 @require_http_methods(['GET'])
 def pricing(request):
+    """Renderiza la pagina publica de precios y planes."""
     return render(request, 'landing/pricing.html')
 
 
 @require_http_methods(['GET'])
 def features(request):
+    """Renderiza la pagina publica de funcionalidades clave."""
     return render(request, 'landing/features.html')

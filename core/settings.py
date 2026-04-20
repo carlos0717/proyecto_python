@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.landing',
     'apps.dashboard',
-    'apps.subscriptions',
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -166,9 +165,14 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_LOGIN_BY_CODE_ENABLED = False
+ACCOUNT_FORMS = {
+    'signup': 'apps.accounts.forms.CustomSignupForm',
+    'login': 'apps.accounts.forms.CustomLoginForm',
+}
 
 # Email configuration
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
@@ -183,12 +187,6 @@ LOGIN_REDIRECT_URL = '/dashboard'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'account_login'
 
-# Stripe settings
-STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
-STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
-STRIPE_PRICE_ID = os.getenv('STRIPE_PRICE_ID', '')
-
 # Content Security Policy (Django 6.0)
 # https://docs.djangoproject.com/en/6.0/ref/middleware/#content-security-policy
 SECURE_CSP = {
@@ -197,8 +195,8 @@ SECURE_CSP = {
     "style-src": [CSP.SELF, CSP.UNSAFE_INLINE, "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
     "font-src": [CSP.SELF, "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
     "img-src": [CSP.SELF, "https:", "data:"],
-    "connect-src": [CSP.SELF, "https://api.stripe.com"],
-    "frame-src": [CSP.SELF, "https://js.stripe.com"],
+    "connect-src": [CSP.SELF],
+    "frame-src": [CSP.SELF],
 }
 
 # Background Tasks (Django 6.0)

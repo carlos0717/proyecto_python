@@ -1,0 +1,136 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Ventas | Peluqueria Estilo{% endblock %}
+{% block page_title %}Ventas con Detalle{% endblock %}
+
+{% block dashboard_content %}
+<div class="grid gap-4 lg:grid-cols-3" x-data="salesForm()">
+    <div class="interactive-card animate-in rounded-2xl border border-line bg-white p-5 shadow-sm lg:col-span-1">
+        <h2 class="text-sm font-semibold uppercase tracking-[0.14em] text-brand">Nueva venta</h2>
+        <form method="post" class="mt-4 space-y-3">
+            {% csrf_token %}
+            <input type="date" name="occurred_on" value="{{ end_date|date:'Y-m-d' }}"
+                class="w-full rounded-xl border border-line bg-panel px-3 py-2 text-sm focus:border-brand focus:outline-none">
+            {% if user.is_manager %}
+            <select name="employee_id" class="w-full rounded-xl border border-line bg-panel px-3 py-2 text-sm">
+                <option value="">Sin colaborador</option>
+                {% for employee in employees %}
+                <option value="{{ employee.id }}">{{ employee.full_name }}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
+
+            <template x-for="(row, index) in rows" :key="row.key">
+                <div class="rounded-xl border border-line p-3">
+                    <div class="grid grid-cols-1 gap-2">
+                        <select :name="'item_type[]'" x-model="row.type"
+                            class="rounded-lg border border-line px-2 py-2 text-sm">
+                            <option value="service">Servicio</option>
+                            <option value="product">Producto</option>
+                        </select>
+                        <select :name="'item_ref[]'" class="rounded-lg border border-line px-2 py-2 text-sm">
+                            <template x-if="row.type === 'service'">
+                                <optgroup label="Servicios">
+                                    {% for service in services %}
+                                    <option value="{{ service.id }}">{{ service.name }} - S/ {{ service.price }}
+                                    </option>
+                                    {% endfor %}
+                                </optgroup>
+                            </template>
+                            <template x-if="row.type === 'product'">
+                                <optgroup label="Productos">
+                                    {% for product in products %}
+                                    <option value="{{ product.id }}">{{ product.name }} (stock {{ product.stock }}) - S/
+                                        {{ product.unit_price }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                            </template>
+                        </select>
+                        <div class="flex items-center gap-2">
+                            <input type="number" min="1" :name="'item_qty[]'" value="1"
+                                class="w-20 rounded-lg border border-line px-2 py-2 text-sm">
+                            <button type="button" @click="removeRow(index)"
+                                class="rounded-lg border border-line px-2 py-2 text-xs">Quitar</button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <button type="button" @click="addRow()"
+                class="w-full rounded-lg border border-line px-3 py-2 text-sm">Agregar item</button>
+            <textarea name="notes" placeholder="Observaciones"
+                class="w-full rounded-xl border border-line bg-panel px-3 py-2 text-sm"></textarea>
+            <button
+                class="w-full rounded-xl bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand">Registrar
+                venta</button>
+        </form>
+    </div>
+
+    <div class="interactive-card animate-in delay-1 rounded-2xl border border-line bg-white shadow-sm lg:col-span-2">
+        <form method="get" class="grid grid-cols-1 gap-2 border-b border-line px-5 py-4 md:grid-cols-3">
+            <input type="date" name="start" value="{{ start_date|date:'Y-m-d' }}"
+                class="rounded-lg border border-line px-2 py-1.5 text-xs">
+            <input type="date" name="end" value="{{ end_date|date:'Y-m-d' }}"
+                class="rounded-lg border border-line px-2 py-1.5 text-xs">
+            <button class="rounded-lg bg-ink px-3 py-1.5 text-xs font-semibold text-white">Filtrar</button>
+        </form>
+
+        <div class="divide-y divide-line">
+            {% for sale in sales %}
+            <div class="px-5 py-4">
+                <div class="flex items-center justify-between">
+                    <p class="text-sm font-semibold text-ink">Venta #{{ sale.id }} - S/ {{ sale.total_amount }}</p>
+                    <p class="text-xs text-ink/60">{{ sale.occurred_on }}{% if sale.employee %} · {{
+                        sale.employee.full_name }}{% endif %}</p>
+                </div>
+                <ul class="mt-2 list-disc pl-5 text-xs text-ink/70">
+                    {% for item in sale.items.all %}
+                    <li>
+                        {% if item.product %}{{ item.product.name }}{% else %}{{ item.service.name }}{% endif %}
+                        x{{ item.quantity }} · S/ {{ item.subtotal }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% empty %}
+            <div class="px-5 py-6 text-sm text-ink/70">No hay ventas registradas en el periodo.</div>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="flex items-center justify-between border-t border-line px-5 py-4 text-sm">
+            <p class="text-ink/70">Pagina {{ page_obj.number }} de {{ paginator.num_pages }}</p>
+            <div class="flex items-center gap-2">
+                {% if page_obj.has_previous %}
+                <a href="?start={{ start_date|date:'Y-m-d' }}&end={{ end_date|date:'Y-m-d' }}&page={{ page_obj.previous_page_number }}"
+                    class="rounded-lg border border-line px-3 py-1.5">Anterior</a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                <a href="?start={{ start_date|date:'Y-m-d' }}&end={{ end_date|date:'Y-m-d' }}&page={{ page_obj.next_page_number }}"
+                    class="rounded-lg border border-line px-3 py-1.5">Siguiente</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script nonce="{{ csp_nonce }}">
+    function salesForm() {
+        return {
+            rows: [{ key: Date.now(), type: 'service' }],
+            addRow() {
+                this.rows.push({ key: Date.now() + Math.random(), type: 'service' });
+            },
+            removeRow(index) {
+                if (this.rows.length === 1) {
+                    return;
+                }
+                this.rows.splice(index, 1);
+            },
+        };
+    }
+</script>
+{% endblock %}

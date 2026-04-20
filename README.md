@@ -1,34 +1,99 @@
 # Django SaaS Boilerplate
 
-The open-source Django starter kit for building SaaS applications. Auth, payments, dashboard, and deployment — all wired up.
+Kit de inicio para construir aplicaciones SaaS con Django. Incluye autenticación, pagos, panel de control y despliegue.
 
 <div align="center">
   <img src="https://img.shields.io/badge/Django-6.0-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django"/>
   <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/Tailwind_CSS-CDN-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"/>
   <img src="https://img.shields.io/badge/Stripe-Payments-6772E5?style=for-the-badge&logo=stripe&logoColor=white" alt="Stripe"/>
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License: MIT"/>
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="Licencia: MIT"/>
 </div>
 
 ---
 
-## What's included
+## Instrucciones para configurar el proyecto
 
-- **Custom user model** — email-only login, no username
-- **Authentication** — signup, login, email verification, password reset (django-allauth)
-- **Stripe subscriptions** — Payment Methods API, webhooks, subscription status tracking
-- **User dashboard** — sidebar nav, profile, settings, notification preferences, API keys
-- **Subscription plans** — admin-managed plans with trial support
-- **Background tasks** — Django 6.0 native `@task()` decorator, no Celery needed
-- **Content Security Policy** — Django 6.0 built-in CSP middleware with nonces
-- **Template partials** — Django 6.0 `{% partialdef %}` for reusable components
-- **Security headers** — HSTS, SSL redirect, secure cookies (auto-enabled in production)
-- **PostgreSQL support** — `DATABASE_URL` with SQLite fallback
-- **Static files** — WhiteNoise, no nginx needed
-- **Deployment** — Gunicorn + Procfile, ready for Railway/Heroku/VPS
-- **Linting** — Ruff with Django-specific rules
-- **16 tests** — landing pages, auth, dashboard, models
-- **Seed data** — one command to populate demo data
+Sigue estos pasos para configurar y ejecutar el proyecto en tu computadora:
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/eriktaveras/django-saas-boilerplate.git
+cd django-saas-boilerplate
+```
+
+### 2. Crear y activar un entorno virtual
+
+En Windows:
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+En macOS/Linux:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Instalar dependencias
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configurar variables de entorno
+
+Copia el archivo de ejemplo y edítalo según sea necesario:
+```bash
+cp .env.example .env
+```
+Edita el archivo `.env` para configurar la base de datos, correo electrónico y otros ajustes.
+
+### 5. Aplicar migraciones
+
+Ejecuta los siguientes comandos para configurar la base de datos:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 6. Poblar datos de demostración
+
+Para crear usuarios, empleados y operaciones de prueba, ejecuta:
+```bash
+python manage.py seed_data
+```
+
+Credenciales de prueba:
+- **Administrador:** `admin@example.com` / `admin123`
+- **Gerente:** `gerente@peluqueria.local` / `gerente123`
+- **Empleado:** `empleado@peluqueria.local` / `empleado123`
+
+### 7. Ejecutar el servidor de desarrollo
+
+Inicia el servidor con:
+```bash
+python manage.py runserver
+```
+
+Accede a la aplicación en **http://localhost:8000**.
+
+---
+
+## Características principales
+
+- **Modelo de usuario personalizado** — inicio de sesión solo con correo electrónico.
+- **Autenticación** — registro, inicio de sesión, verificación de correo, restablecimiento de contraseña.
+- **Suscripciones con Stripe** — API de métodos de pago, webhooks, seguimiento de estado.
+- **Panel de usuario** — navegación lateral, perfil, ajustes, preferencias de notificación.
+- **Planes de suscripción** — planes administrados desde el panel de administrador.
+- **Tareas en segundo plano** — Decorador `@task()` nativo de Django 6.0.
+- **Política de seguridad de contenido (CSP)** — Middleware integrado en Django 6.0.
+- **Archivos estáticos** — Servidos con WhiteNoise.
+- **Despliegue** — Listo para Railway/Heroku/VPS con Gunicorn y Procfile.
+- **Datos de prueba** — Comando único para poblar datos de demostración.
 
 ## Tech stack
 
@@ -125,12 +190,6 @@ SECRET_KEY=your-secret-key
 # Database (default: SQLite)
 # DATABASE_URL=postgres://user:password@localhost:5432/dbname
 
-# Stripe (required for payments)
-STRIPE_PUBLIC_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_ID=price_...
-
 # Email (default: console backend)
 # EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
 # EMAIL_HOST=smtp.gmail.com
@@ -203,21 +262,6 @@ python manage.py collectstatic
 gunicorn core.wsgi --bind 0.0.0.0:8000
 ```
 
-## Premium version
-
-Looking for more? **[DjangoBlaze](https://www.djangoblaze.com)** is the premium version with:
-
-- Teams & multi-tenancy (roles, invitations, team-scoped data)
-- AI chat with OpenAI streaming
-- Blog with markdown, SEO, and sitemaps
-- Google OAuth
-- Onboarding wizard
-- Admin metrics dashboard (MRR, signups chart)
-- 20 slash commands for Claude Code
-- 15 AI-friendly documentation guides
-- 30 ready-to-use prompts
-- 48 passing tests
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
@@ -226,16 +270,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 MIT License. See [LICENSE](LICENSE) for details.
 
-## Author
-
-**Erik Taveras** — Full Stack Developer
-
-- [eriktaveras.com](https://www.eriktaveras.com)
-- [github.com/eriktaveras](https://github.com/eriktaveras)
-- [hello@eriktaveras.com](mailto:hello@eriktaveras.com)
-
 ---
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/chart?repos=eriktaveras/django-saas-boilerplate&type=date&legend=top-left)](https://www.star-history.com/?repos=eriktaveras%2Fdjango-saas-boilerplate&type=date&legend=top-left)

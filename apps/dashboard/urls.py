@@ -1,16 +1,31 @@
+"""Rutas internas del dashboard autenticado."""
+
+# path declara endpoints y asocia cada URL a su vista correspondiente.
 from django.urls import path
 
+# views contiene la logica HTTP de cada funcionalidad del panel.
 from . import views
 
 app_name = 'dashboard'
 
 urlpatterns = [
+    # Resumen operativo diario y mensual del negocio.
     path('', views.dashboard_home, name='home'),
+    # Datos personales del usuario autenticado.
     path('profile/', views.profile, name='profile'),
-    path('settings/', views.settings, name='settings'),
-    path('settings/generate-api-key/', views.generate_api_key, name='generate_api_key'),
-    path('subscription/plans/', views.subscription_plans, name='subscription_plans'),
-    path('subscription/plans/<slug:plan_slug>/subscribe/', views.subscribe_to_plan, name='subscribe_to_plan'),
-    path('subscription/cancel/', views.cancel_subscription, name='cancel_subscription'),
-    path('subscription/trial/', views.start_trial, name='start_trial'),
+    # Alta, listado y filtrado de movimientos financieros.
+    path('operations/', views.operations, name='operations'),
+    # Catalogo de servicios y productos con control de stock.
+    path('catalog/', views.catalog, name='catalog'),
+    # Registro de ventas con detalle multiproducto/multiservicio.
+    path('sales/', views.sales, name='sales'),
+    # Exportaciones para analisis externo (Excel/CSV).
+    path('operations/export.csv', views.operations_export_csv, name='operations_export_csv'),
+    path('operations/export.xlsx', views.operations_export_xlsx, name='operations_export_xlsx'),
+    # Gestion de colaboradores y sus estados.
+    path('employees/', views.employees, name='employees'),
+    path('employees/<int:employee_id>/update/', views.employee_update, name='employee_update'),
+    path('employees/<int:employee_id>/toggle-active/', views.employee_toggle_active, name='employee_toggle_active'),
+    # Reportes comparativos por periodos.
+    path('reports/', views.reports, name='reports'),
 ]

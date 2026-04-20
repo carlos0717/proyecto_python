@@ -1,12 +1,11 @@
 # Django SaaS Boilerplate
 
 ## Overview
-Django SaaS boilerplate with Stripe subscriptions, email authentication, and a modern frontend. Built with Django 6.0 and Python 3.12.
+Django app for hair salon operations with email authentication and a modern frontend. Built with Django 6.0 and Python 3.12.
 
 ## Tech Stack
 - **Backend:** Django 6.0, Python 3.12
 - **Auth:** django-allauth (email-only, no username)
-- **Payments:** Stripe (Payment Methods API)
 - **Frontend:** Tailwind CSS (CDN) + Alpine.js + HTMX
 - **Database:** SQLite (dev) / PostgreSQL via `DATABASE_URL` (prod)
 - **Static Files:** WhiteNoise
@@ -19,9 +18,8 @@ Django SaaS boilerplate with Stripe subscriptions, email authentication, and a m
 core/           → Settings, URLs, WSGI/ASGI
 apps/
   accounts/     → CustomUser model (email-only), admin
-  dashboard/    → Dashboard, profile, settings, subscription management
+  dashboard/    → Dashboard, profile, employees, operations, catalog, sales, reports
   landing/      → Public pages (home, pricing, features), robots.txt
-  subscriptions/→ Stripe integration, webhooks
 templates/      → All HTML templates (Tailwind + Alpine.js)
 static/         → CSS, JS, images
 ```
@@ -63,5 +61,4 @@ make superuser  # Create admin user
 Copy `.env.example` to `.env`. Key variables:
 - `SECRET_KEY` — Django secret key
 - `DATABASE_URL` — PostgreSQL connection (default: SQLite)
-- `STRIPE_*` — Stripe API keys
 - `EMAIL_*` — SMTP configuration

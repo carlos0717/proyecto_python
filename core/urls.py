@@ -14,20 +14,27 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# settings/static habilitan servido de estaticos en modo desarrollo.
 from django.conf import settings
 from django.conf.urls.static import static
+# admin y include/path definen panel interno y enrutamiento modular.
 from django.contrib import admin
 from django.urls import include, path
 
+# robots_txt expone metadatos para motores de busqueda.
 from apps.landing.views import robots_txt
 
 urlpatterns = [
+    # Archivo robots para SEO.
     path('robots.txt', robots_txt, name='robots_txt'),
+    # Panel administrativo de Django.
     path('admin/', admin.site.urls),
+    # Flujo de autenticacion (login/signup/reset) de allauth.
     path('accounts/', include('allauth.urls')),
+    # Sitio publico (home, pricing, features).
     path('', include('apps.landing.urls')),
+    # Aplicacion interna autenticada.
     path('dashboard/', include('apps.dashboard.urls')),
-    path('subscriptions/', include('apps.subscriptions.urls')),
 ]
 
 if settings.DEBUG:

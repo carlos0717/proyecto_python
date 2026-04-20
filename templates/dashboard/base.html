@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Dashboard | SaaS Boilerplate{% endblock %}</title>
+    <title>{% block title %}Panel | Peluqueria Estilo{% endblock %}</title>
 
     <script nonce="{{ csp_nonce }}" src="https://cdn.tailwindcss.com"></script>
     <script nonce="{{ csp_nonce }}">
@@ -11,177 +12,260 @@
             theme: {
                 extend: {
                     colors: {
-                        black: '#121212',
-                        'dark-gray': '#292929',
-                        gray: '#4a4a4a',
-                        'light-gray': '#e0e0e0',
-                        white: '#ffffff'
+                        ink: '#1f2933',
+                        brand: '#7a4c36',
+                        accent: '#f1dfca',
+                        line: '#e8ded3',
+                        panel: '#fffdfa',
+                        success: '#0f766e',
+                        danger: '#b91c1c'
                     },
                     fontFamily: {
-                        sans: ['Space Grotesk', 'sans-serif'],
+                        sans: ['Manrope', 'sans-serif'],
                     },
                 }
             }
         }
     </script>
 
-    <link nonce="{{ csp_nonce }}" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
-    <link nonce="{{ csp_nonce }}" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link nonce="{{ csp_nonce }}" rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link nonce="{{ csp_nonce }}" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script nonce="{{ csp_nonce }}" defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script nonce="{{ csp_nonce }}" src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <style nonce="{{ csp_nonce }}">
+        :where(a, button, input, select, textarea, summary) {
+            transition: color 160ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+        }
+
+        :where(input, select, textarea, button, a, summary):focus-visible {
+            outline: 2px solid #7a4c36;
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(122, 76, 54, 0.18);
+        }
+
+        .interactive-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(31, 41, 51, 0.08);
+        }
+
+        .interactive-row:hover {
+            background: rgba(241, 223, 202, 0.22);
+        }
+
+        .animate-in {
+            animation: sectionIn 420ms ease both;
+        }
+
+        .delay-1 {
+            animation-delay: 70ms;
+        }
+
+        .delay-2 {
+            animation-delay: 130ms;
+        }
+
+        .delay-3 {
+            animation-delay: 190ms;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(232, 222, 211, 0.5) 20%, rgba(241, 223, 202, 0.8) 38%, rgba(232, 222, 211, 0.5) 55%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s linear infinite;
+        }
+
+        @keyframes sectionIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            from {
+                background-position: 200% 0;
+            }
+
+            to {
+                background-position: -200% 0;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            :where(a, button, input, select, textarea, summary) {
+                transition: none;
+            }
+
+            .interactive-card:hover {
+                transform: none;
+            }
+
+            .animate-in,
+            .skeleton {
+                animation: none;
+            }
+        }
+    </style>
 
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-[#fafafa] font-sans text-black">
-    <!--
-        Mobile sidebar: CSS-only using :target pseudo-class.
-        Hamburger links to #mobile-nav, close/backdrop links to #_
-    -->
 
-    <!-- Mobile sidebar overlay -->
-    <div id="mobile-nav" class="fixed inset-0 z-50 lg:hidden [&:not(:target)]:hidden">
-        <!-- Backdrop -->
-        <a href="#_" class="fixed inset-0 bg-black/40 cursor-pointer"></a>
-        <!-- Panel -->
-        <aside class="fixed inset-y-0 left-0 w-64 bg-white flex flex-col shadow-xl">
-            <div class="h-14 flex items-center justify-between px-5 border-b border-light-gray">
-                <a href="{% url 'landing:home' %}" class="flex items-center gap-2">
-                    <div class="w-6 h-6 bg-black flex items-center justify-center">
-                        <span class="text-white text-[10px] font-bold">S</span>
-                    </div>
-                    <span class="text-sm font-medium">SaaS Boilerplate</span>
-                </a>
-                <a href="#_" class="text-gray hover:text-black p-1">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </a>
-            </div>
-            <nav class="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto">
-                <a href="{% url 'dashboard:home' %}" class="flex items-center gap-3 px-3 py-2.5 rounded text-sm {% if request.resolver_match.url_name == 'home' %}bg-black text-white{% else %}text-gray hover:text-black hover:bg-light-gray/50{% endif %}">
-                    <i class="fa-solid fa-house text-xs w-4 text-center"></i> Overview
-                </a>
-                <a href="{% url 'dashboard:profile' %}" class="flex items-center gap-3 px-3 py-2.5 rounded text-sm {% if request.resolver_match.url_name == 'profile' %}bg-black text-white{% else %}text-gray hover:text-black hover:bg-light-gray/50{% endif %}">
-                    <i class="fa-solid fa-user text-xs w-4 text-center"></i> Profile
-                </a>
-                <a href="{% url 'dashboard:settings' %}" class="flex items-center gap-3 px-3 py-2.5 rounded text-sm {% if request.resolver_match.url_name == 'settings' %}bg-black text-white{% else %}text-gray hover:text-black hover:bg-light-gray/50{% endif %}">
-                    <i class="fa-solid fa-gear text-xs w-4 text-center"></i> Settings
-                </a>
-                <a href="{% url 'dashboard:subscription_plans' %}" class="flex items-center gap-3 px-3 py-2.5 rounded text-sm {% if request.resolver_match.url_name == 'subscription_plans' %}bg-black text-white{% else %}text-gray hover:text-black hover:bg-light-gray/50{% endif %}">
-                    <i class="fa-solid fa-credit-card text-xs w-4 text-center"></i> Plans
-                </a>
-                <div class="pt-4 mt-4 border-t border-light-gray">
-                    <a href="{% url 'landing:home' %}" class="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-gray hover:text-black hover:bg-light-gray/50">
-                        <i class="fa-solid fa-arrow-left text-xs w-4 text-center"></i> Back to site
-                    </a>
-                </div>
-            </nav>
-            <div class="p-3 border-t border-light-gray">
-                <div class="flex items-center gap-3 px-3 py-2">
-                    <div class="w-7 h-7 bg-black flex-shrink-0 flex items-center justify-center text-white text-xs font-medium rounded">
-                        {{ user.email|first|upper }}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-sm text-black truncate">{{ user.get_full_name|default:user.email }}</p>
-                        <p class="text-xs text-gray truncate">{{ user.email }}</p>
-                    </div>
-                </div>
-                <a href="{% url 'account_logout' %}" class="flex items-center gap-3 px-3 py-2 rounded text-sm text-gray hover:text-black hover:bg-light-gray/50 mt-1">
-                    <i class="fa-solid fa-right-from-bracket text-xs w-4 text-center"></i> Log out
-                </a>
-            </div>
-        </aside>
-    </div>
+<body class="bg-[#f7f4ef] font-sans text-ink">
+    <div x-data="{ sidebarOpen: false }" class="min-h-screen">
+        <div x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 z-40 bg-black/45 lg:hidden"
+            @click="sidebarOpen = false"></div>
 
-    <div class="min-h-screen lg:flex">
-        <!-- Sidebar - Desktop -->
-        <aside class="hidden lg:flex lg:flex-col lg:w-56 lg:fixed lg:inset-y-0 bg-white border-r border-light-gray z-30">
-            <div class="h-14 flex items-center px-5 border-b border-light-gray">
-                <a href="{% url 'landing:home' %}" class="flex items-center gap-2">
-                    <div class="w-6 h-6 bg-black flex items-center justify-center">
-                        <span class="text-white text-[10px] font-bold">S</span>
+        <aside
+            class="fixed inset-y-0 left-0 z-50 w-72 transform border-r border-line bg-ink text-white transition duration-200 lg:translate-x-0"
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+            <div class="flex h-16 items-center justify-between border-b border-white/15 px-5">
+                <a href="{% url 'landing:home' %}" class="flex items-center gap-3">
+                    <div
+                        class="flex h-9 w-9 items-center justify-center rounded-full bg-white text-sm font-bold text-ink">
+                        E</div>
+                    <div>
+                        <p class="text-sm font-semibold">Peluqueria Estilo</p>
+                        <p class="text-[11px] uppercase tracking-[0.16em] text-white/70">Panel</p>
                     </div>
-                    <span class="text-sm font-medium">SaaS Boilerplate</span>
                 </a>
+                <button class="lg:hidden" @click="sidebarOpen = false"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <nav class="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto">
-                <a href="{% url 'dashboard:home' %}" class="flex items-center gap-3 px-3 py-2 rounded text-sm {% if request.resolver_match.url_name == 'home' %}bg-black text-white{% else %}text-gray hover:text-black hover:bg-light-gray/50{% endif %} transition-colors">
-                    <i class="fa-solid fa-house text-xs w-4 text-center"></i> Overview
+
+            <nav class="space-y-1 p-3 text-sm">
+                <a href="{% url 'dashboard:home' %}"
+                    class="flex items-center gap-3 rounded-lg px-3 py-2 {% if request.resolver_match.url_name == 'home' %}bg-white text-ink{% else %}text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-house w-4 text-center"></i> Resumen
                 </a>
-                <a href="{% url 'dashboard:profile' %}" class="flex items-center gap-3 px-3 py-2 rounded text-sm {% if request.resolver_match.url_name == 'profile' %}bg-black text-white{% else %}text-gray hover:text-black hover:bg-light-gray/50{% endif %} transition-colors">
-                    <i class="fa-solid fa-user text-xs w-4 text-center"></i> Profile
+                {% if user.is_collaborator or user.is_manager %}
+                <a href="{% url 'dashboard:operations' %}"
+                    class="flex items-center gap-3 rounded-lg px-3 py-2 {% if request.resolver_match.url_name == 'operations' %}bg-white text-ink{% else %}text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-scissors w-4 text-center"></i> Operaciones
                 </a>
-                <a href="{% url 'dashboard:settings' %}" class="flex items-center gap-3 px-3 py-2 rounded text-sm {% if request.resolver_match.url_name == 'settings' %}bg-black text-white{% else %}text-gray hover:text-black hover:bg-light-gray/50{% endif %} transition-colors">
-                    <i class="fa-solid fa-gear text-xs w-4 text-center"></i> Settings
+                <a href="{% url 'dashboard:sales' %}"
+                    class="flex items-center gap-3 rounded-lg px-3 py-2 {% if request.resolver_match.url_name == 'sales' %}bg-white text-ink{% else %}text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-cash-register w-4 text-center"></i> Ventas
                 </a>
-                <a href="{% url 'dashboard:subscription_plans' %}" class="flex items-center gap-3 px-3 py-2 rounded text-sm {% if request.resolver_match.url_name == 'subscription_plans' %}bg-black text-white{% else %}text-gray hover:text-black hover:bg-light-gray/50{% endif %} transition-colors">
-                    <i class="fa-solid fa-credit-card text-xs w-4 text-center"></i> Plans
+                <a href="{% url 'dashboard:catalog' %}"
+                    class="flex items-center gap-3 rounded-lg px-3 py-2 {% if request.resolver_match.url_name == 'catalog' %}bg-white text-ink{% else %}text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-boxes-stacked w-4 text-center"></i> Catalogo
                 </a>
-                <div class="pt-4 mt-4 border-t border-light-gray">
-                    <a href="{% url 'landing:home' %}" class="flex items-center gap-3 px-3 py-2 rounded text-sm text-gray hover:text-black hover:bg-light-gray/50 transition-colors">
-                        <i class="fa-solid fa-arrow-left text-xs w-4 text-center"></i> Back to site
-                    </a>
-                </div>
+                {% if user.is_manager %}
+                <a href="{% url 'dashboard:employees' %}"
+                    class="flex items-center gap-3 rounded-lg px-3 py-2 {% if request.resolver_match.url_name == 'employees' %}bg-white text-ink{% else %}text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-users w-4 text-center"></i> Empleados
+                </a>
+                {% endif %}
+                <a href="{% url 'dashboard:reports' %}"
+                    class="flex items-center gap-3 rounded-lg px-3 py-2 {% if request.resolver_match.url_name == 'reports' %}bg-white text-ink{% else %}text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-chart-column w-4 text-center"></i> Reportes
+                </a>
+                {% endif %}
+                <a href="{% url 'dashboard:profile' %}"
+                    class="flex items-center gap-3 rounded-lg px-3 py-2 {% if request.resolver_match.url_name == 'profile' %}bg-white text-ink{% else %}text-white/80 hover:bg-white/10 hover:text-white{% endif %}">
+                    <i class="fa-solid fa-user w-4 text-center"></i> Perfil
+                </a>
             </nav>
-            <div class="p-3 border-t border-light-gray">
-                <div class="flex items-center gap-3 px-3 py-2">
-                    <div class="w-7 h-7 bg-black flex-shrink-0 flex items-center justify-center text-white text-xs font-medium rounded">
-                        {{ user.email|first|upper }}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-sm text-black truncate">{{ user.get_full_name|default:user.email }}</p>
-                        <p class="text-xs text-gray truncate">{{ user.email }}</p>
-                    </div>
-                </div>
-                <a href="{% url 'account_logout' %}" class="flex items-center gap-3 px-3 py-2 rounded text-sm text-gray hover:text-black hover:bg-light-gray/50 transition-colors mt-1">
-                    <i class="fa-solid fa-right-from-bracket text-xs w-4 text-center"></i> Log out
+
+            <div class="mt-auto border-t border-white/15 p-3">
+                <a href="{% url 'account_logout' %}"
+                    class="flex items-center gap-3 rounded-lg px-3 py-2 text-white/80 hover:bg-white/10 hover:text-white">
+                    <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Cerrar sesion
                 </a>
             </div>
         </aside>
 
-        <!-- Main content area -->
-        <div class="flex-1 lg:pl-56 flex flex-col min-h-screen">
-            <!-- Top bar -->
-            <header class="h-14 bg-white border-b border-light-gray flex items-center px-4 sm:px-6 lg:px-8 sticky top-0 z-10">
-                <a href="#mobile-nav" class="lg:hidden mr-4 text-gray hover:text-black">
-                    <i class="fa-solid fa-bars text-lg"></i>
-                </a>
-                <div class="flex-1 flex items-center justify-between">
-                    <h1 class="text-sm font-medium text-black">{% block page_title %}Dashboard{% endblock %}</h1>
+        <div class="lg:pl-72">
+            <header class="sticky top-0 z-30 border-b border-line bg-panel/90 backdrop-blur">
+                <div class="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center gap-3">
-                        <span class="hidden sm:block text-xs text-gray">{{ user.email }}</span>
-                        <div class="w-7 h-7 bg-black flex items-center justify-center text-white text-xs font-medium rounded">
-                            {{ user.email|first|upper }}
+                        <button class="rounded-lg border border-line bg-white px-3 py-2 text-sm lg:hidden"
+                            @click="sidebarOpen = true">
+                            <i class="fa-solid fa-bars"></i>
+                        </button>
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.15em] text-brand">Administracion</p>
+                            <h1 class="text-sm font-semibold text-ink">{% block page_title %}Panel{% endblock %}</h1>
                         </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-semibold text-ink">{{ user.email }}</p>
+                        <p class="text-xs text-brand/80">{{ user.get_role_display }}</p>
                     </div>
                 </div>
             </header>
 
-            <!-- Page content -->
-            <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="border border-light-gray bg-white p-3 flex mb-4 rounded" role="alert">
-                            <div class="mr-3">
-                                {% if message.tags == 'error' %}
-                                    <i class="fa-solid fa-circle-exclamation text-black text-sm"></i>
-                                {% elif message.tags == 'success' %}
-                                    <i class="fa-solid fa-check text-black text-sm"></i>
-                                {% else %}
-                                    <i class="fa-solid fa-circle-info text-black text-sm"></i>
-                                {% endif %}
-                            </div>
-                            <p class="text-sm flex-1">{{ message }}</p>
-                            <button class="ml-3 text-gray hover:text-black" onclick="this.parentElement.remove()">
-                                <i class="fa-solid fa-xmark text-xs"></i>
-                            </button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+            {% if messages %}
+            <div class="pointer-events-none fixed right-4 top-20 z-[80] w-[min(92vw,26rem)] sm:right-6 sm:top-24">
+                {% for message in messages %}
+                <div data-toast
+                    class="pointer-events-auto mb-3 flex items-start gap-3 rounded-xl border p-4 shadow-lg ring-1 ring-black/5 transition duration-200 ease-in-out {% if 'success' in message.tags %}border-emerald-200 bg-emerald-50{% elif 'error' in message.tags %}border-rose-200 bg-rose-50{% elif 'warning' in message.tags %}border-amber-200 bg-amber-50{% else %}border-line bg-white{% endif %}"
+                    role="alert" aria-live="polite">
+                    {% if 'success' in message.tags %}
+                    <i class="fa-solid fa-circle-check text-emerald-700"></i>
+                    <p class="flex-1 pr-2 text-sm text-emerald-900">{{ message }}</p>
+                    {% elif 'error' in message.tags %}
+                    <i class="fa-solid fa-circle-xmark text-rose-700"></i>
+                    <p class="flex-1 pr-2 text-sm text-rose-900">{{ message }}</p>
+                    {% elif 'warning' in message.tags %}
+                    <i class="fa-solid fa-triangle-exclamation text-amber-700"></i>
+                    <p class="flex-1 pr-2 text-sm text-amber-900">{{ message }}</p>
+                    {% else %}
+                    <i class="fa-solid fa-circle-info text-brand"></i>
+                    <p class="flex-1 pr-2 text-sm text-ink/80">{{ message }}</p>
+                    {% endif %}
+                    <button type="button" class="mt-0.5 text-ink/45 hover:text-ink" data-toast-close
+                        aria-label="Cerrar mensaje">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <main class="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
 
                 {% block dashboard_content %}{% endblock %}
             </main>
         </div>
     </div>
+    <script nonce="{{ csp_nonce }}">
+        document.addEventListener('DOMContentLoaded', function () {
+            var toasts = document.querySelectorAll('[data-toast]');
 
-    {% block extra_js %}{% endblock %}
+            toasts.forEach(function (toast) {
+                // Desvanece primero y luego elimina el nodo.
+                var removeToast = function () {
+                    toast.classList.add('opacity-0', 'translate-x-3');
+                    toast.addEventListener('transitionend', function () {
+                        if (toast.isConnected) {
+                            toast.remove();
+                        }
+                    }, { once: true });
+                    setTimeout(function () {
+                        if (toast.isConnected) {
+                            toast.remove();
+                        }
+                    }, 250);
+                };
+
+                // Cierra automaticamente despues de tres segundos.
+                setTimeout(removeToast, 3000);
+
+                var closeButton = toast.querySelector('[data-toast-close]');
+                if (closeButton) {
+                    // Permite cerrar el mensaje de forma manual.
+                    closeButton.addEventListener('click', removeToast);
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>

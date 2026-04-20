@@ -1,0 +1,75 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Catalogo | Peluqueria Estilo{% endblock %}
+{% block page_title %}Servicios y Productos{% endblock %}
+
+{% block dashboard_content %}
+<div class="grid gap-4 lg:grid-cols-2">
+    <div class="interactive-card animate-in rounded-2xl border border-line bg-white p-5 shadow-sm">
+        <h2 class="text-sm font-semibold uppercase tracking-[0.14em] text-brand">Registrar servicio</h2>
+        <form method="post" class="mt-4 space-y-3">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_service">
+            <input type="text" name="service_name" placeholder="Nombre del servicio" required
+                class="w-full rounded-xl border border-line bg-panel px-3 py-2 text-sm focus:border-brand focus:outline-none">
+            <input type="number" step="0.01" min="0" name="service_price" placeholder="Precio" required
+                class="w-full rounded-xl border border-line bg-panel px-3 py-2 text-sm focus:border-brand focus:outline-none">
+            <button
+                class="w-full rounded-xl bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand">Guardar
+                servicio</button>
+        </form>
+
+        <div class="mt-5 divide-y divide-line rounded-xl border border-line">
+            {% for service in services %}
+            <div class="flex items-center justify-between px-3 py-2 text-sm">
+                <span>{{ service.name }}</span>
+                <span class="font-semibold">S/ {{ service.price }}</span>
+            </div>
+            {% empty %}
+            <div class="px-3 py-4 text-xs text-ink/60">No hay servicios registrados.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="interactive-card animate-in delay-1 rounded-2xl border border-line bg-white p-5 shadow-sm">
+        <h2 class="text-sm font-semibold uppercase tracking-[0.14em] text-brand">Registrar producto</h2>
+        <form method="post" class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_product">
+            <input type="text" name="product_name" placeholder="Nombre" required
+                class="rounded-xl border border-line bg-panel px-3 py-2 text-sm focus:border-brand focus:outline-none sm:col-span-2">
+            <input type="text" name="product_sku" placeholder="SKU" required
+                class="rounded-xl border border-line bg-panel px-3 py-2 text-sm focus:border-brand focus:outline-none">
+            <input type="number" step="0.01" min="0" name="product_price" placeholder="Precio" required
+                class="rounded-xl border border-line bg-panel px-3 py-2 text-sm focus:border-brand focus:outline-none">
+            <input type="number" min="0" name="product_stock" placeholder="Stock" required
+                class="rounded-xl border border-line bg-panel px-3 py-2 text-sm focus:border-brand focus:outline-none sm:col-span-2">
+            <button
+                class="rounded-xl bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand sm:col-span-2">Guardar
+                producto</button>
+        </form>
+
+        <div class="mt-5 divide-y divide-line rounded-xl border border-line">
+            {% for product in products %}
+            <div class="px-3 py-2 text-sm">
+                <div class="flex items-center justify-between">
+                    <span>{{ product.name }} ({{ product.sku }})</span>
+                    <span class="font-semibold">S/ {{ product.unit_price }}</span>
+                </div>
+                <form method="post" class="mt-2 flex items-center gap-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="adjust_stock">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <input type="number" min="0" name="new_stock" value="{{ product.stock }}"
+                        class="w-24 rounded-lg border border-line px-2 py-1 text-xs">
+                    <button class="rounded-lg border border-line px-2 py-1 text-xs hover:border-brand">Actualizar
+                        stock</button>
+                </form>
+            </div>
+            {% empty %}
+            <div class="px-3 py-4 text-xs text-ink/60">No hay productos registrados.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
