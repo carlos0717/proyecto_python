@@ -2,12 +2,14 @@
 
 Kit de inicio para construir aplicaciones SaaS con Django. Incluye autenticación, pagos, panel de control y despliegue.
 
+Este proyecto se encuentra alojado en el siguiente repositorio de GitHub:
+
+**Repositorio:** [https://github.com/carlos0717/proyecto_python.git](https://github.com/carlos0717/proyecto_python.git)
+
 <div align="center">
   <img src="https://img.shields.io/badge/Django-6.0-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django"/>
   <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/Tailwind_CSS-CDN-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"/>
-  <img src="https://img.shields.io/badge/Stripe-Payments-6772E5?style=for-the-badge&logo=stripe&logoColor=white" alt="Stripe"/>
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="Licencia: MIT"/>
 </div>
 
 ---
@@ -19,8 +21,8 @@ Sigue estos pasos para configurar y ejecutar el proyecto en tu computadora:
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/eriktaveras/django-saas-boilerplate.git
-cd django-saas-boilerplate
+git clone https://github.com/carlos0717/proyecto_python.git
+cd proyecto_python
 ```
 
 ### 2. Crear y activar un entorno virtual
@@ -82,6 +84,14 @@ Accede a la aplicación en **http://localhost:8000**.
 
 ---
 
+## Cuándo y por qué revisar los archivos PRD_pelu.md y proyecto.md
+
+- **PRD_pelu.md**: Este archivo contiene los requisitos del proyecto, incluyendo los objetivos principales, las funcionalidades esperadas y las necesidades del cliente. Es importante revisarlo al iniciar el desarrollo o al realizar cambios significativos para asegurarse de que el proyecto cumple con los requisitos establecidos.
+
+- **proyecto.md**: Este archivo documenta detalles técnicos del proyecto, como la estructura, las decisiones de diseño y las convenciones utilizadas. Es útil revisarlo al integrar nuevas funcionalidades o al realizar revisiones de código para garantizar que se sigan las mejores prácticas y se mantenga la coherencia en el desarrollo.
+
+---
+
 ## Características principales
 
 - **Modelo de usuario personalizado** — inicio de sesión solo con correo electrónico.
@@ -112,8 +122,8 @@ Accede a la aplicación en **http://localhost:8000**.
 ## Quick start
 
 ```bash
-git clone https://github.com/eriktaveras/django-saas-boilerplate.git
-cd django-saas-boilerplate
+git clone https://github.com/carlos0717/proyecto_python.git
+cd proyecto_python
 make install
 cp .env.example .env
 make migrate
@@ -197,77 +207,3 @@ SECRET_KEY=your-secret-key
 # EMAIL_HOST_USER=your-email@gmail.com
 # EMAIL_HOST_PASSWORD=your-app-password
 ```
-
-## Django 6.0 features used
-
-This boilerplate uses three major features introduced in Django 6.0:
-
-**Background Tasks** — Send emails asynchronously without Celery:
-```python
-from django.tasks import task
-
-@task
-def send_welcome_email(user_email):
-    send_mail("Welcome!", "...", None, [user_email])
-
-# In your view:
-send_welcome_email.enqueue(user_email=user.email)
-```
-
-**Content Security Policy** — Built-in CSP middleware with nonce support:
-```python
-SECURE_CSP = {
-    "script-src": [CSP.SELF, CSP.NONCE],
-    "style-src": [CSP.SELF, CSP.UNSAFE_INLINE],
-}
-```
-```html
-<script nonce="{{ csp_nonce }}" src="..."></script>
-```
-
-**Template Partials** — Reusable template components without separate files:
-```html
-{% partialdef stat_card inline %}
-<div class="card">{{ card_title }}: {{ card_value }}</div>
-{% endpartialdef %}
-
-{% with card_title="Users" card_value="42" %}
-    {% partial stat_card %}
-{% endwith %}
-```
-
-## Deployment
-
-### Railway
-
-Push to GitHub and connect to Railway. The `Procfile` and `DATABASE_URL` handling are already configured.
-
-### Heroku
-
-```bash
-heroku create your-app-name
-heroku config:set SECRET_KEY=your-secret-key
-heroku config:set DEBUG=False
-git push heroku main
-heroku run python manage.py migrate
-heroku run python manage.py seed_data
-```
-
-### VPS
-
-```bash
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py collectstatic
-gunicorn core.wsgi --bind 0.0.0.0:8000
-```
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
-
----
